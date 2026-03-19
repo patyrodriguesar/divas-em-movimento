@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Divas em Movimento</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pink:#D4537E; --pink-l:#FBEAF0; --pink-d:#72243E; --pink-m:#ED93B1;
+  --teal:#1D9E75; --teal-l:#E1F5EE;
+  --purple:#7F77DD; --purple-l:#EEEDFE;
+  --coral:#D85A30; --coral-l:#FAECE7;
+  --amber:#BA7517; --amber-l:#FAEEDA;
+  --bg:#FFF6F9; --white:#ffffff; --text:#2C1A22; --muted:#8a6070;
+  --border:rgba(212,83,126,0.18); --rad:16px; --rad-s:10px;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+/* ── MAIN APP ── */
+.app{display:block;}
+header{background:linear-gradient(135deg,#D4537E 0%,#ED93B1 60%,#F4C0D1 100%);padding:1.2rem 1.2rem .8rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.logo{font-family:'Playfair Display',serif;font-size:1.3rem;font-weight:900;color:white;}
+.logo span{font-size:.7rem;display:block;font-family:'DM Sans',sans-serif;font-weight:300;letter-spacing:3px;text-transform:uppercase;opacity:.9;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#4ade80;}
+.avatar-hdr{width:36px;height:36px;border-radius:50%;border:2px solid white;background:white;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:transform .2s;}
+.avatar-hdr:hover{transform:scale(1.08);}
+.tabs{display:flex;background:white;border-bottom:1.5px solid var(--border);overflow-x:auto;}
+.tab{flex:1;min-width:72px;padding:.75rem .4rem;text-align:center;font-size:11px;font-weight:500;color:var(--muted);cursor:pointer;border-bottom:2.5px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab.active{color:var(--pink);border-bottom-color:var(--pink);}
+.tab .ic{font-size:16px;display:block;margin-bottom:2px;}
+.content{padding:1.1rem;max-width:700px;margin:0 auto;}
+.screen{display:none;}
+.screen.active{display:block;}
+/* ── EMOJI PICKER ── */
+.emoji-picker{display:flex;flex-wrap:wrap;gap:8px;margin-top:.8rem;justify-content:center;}
+.emoji-opt{width:40px;height:40px;border-radius:50%;border:2px solid var(--border);background:white;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.emoji-opt:hover{border-color:var(--pink);transform:scale(1.1);}
+.emoji-opt.sel{border-color:var(--pink);background:var(--pink-l);}
+.edit-avatar-btn{background:none;border:none;font-size:10px;color:var(--pink);cursor:pointer;display:block;margin:.2rem auto 0;text-decoration:underline;}
+/* ── LOGIN ── */
+.login-wrap{min-height:calc(100vh - 100px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem 1.5rem;}
+.login-title{font-family:'Playfair Display',serif;font-size:1.7rem;font-weight:900;color:var(--pink-d);text-align:center;margin-bottom:.3rem;}
+.login-sub{color:var(--muted);font-size:.85rem;text-align:center;margin-bottom:.3rem;}
+.group-desc{font-size:.8rem;color:var(--pink);font-style:italic;text-align:center;margin-bottom:1.5rem;}
+.diva-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;width:100%;max-width:360px;}
+.diva-card{background:white;border:1.5px solid var(--border);border-radius:var(--rad);padding:1.1rem .8rem;text-align:center;cursor:pointer;transition:all .2s;}
+.diva-card:hover{border-color:var(--pink);transform:translateY(-2px);}
+.diva-card.sel{border-color:var(--pink);background:var(--pink-l);}
+.diva-av{width:52px;height:52px;border-radius:50%;margin:0 auto .5rem;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:700;color:white;}
+.diva-name{font-weight:600;font-size:14px;color:var(--text);}
+.diva-streak{font-size:11px;color:var(--muted);margin-top:2px;}
+.btn-enter{background:var(--pink);color:white;border:none;border-radius:30px;padding:.8rem 2.2rem;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .2s;display:block;margin:1.2rem auto 0;}
+.btn-enter:hover{background:var(--pink-d);transform:translateY(-1px);}
+.btn-enter:disabled{opacity:.4;cursor:not-allowed;transform:none;}
+/* ── CHECKLIST ── */
+.greeting h2{font-family:'Playfair Display',serif;font-size:1.4rem;font-weight:700;color:var(--pink-d);}
+.greeting .dt{font-size:12px;color:var(--muted);margin-top:2px;}
+.sec-title{font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:1.3rem 0 .65rem;}
+.act-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;}
+.act-btn{background:white;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.75rem .5rem;cursor:pointer;transition:all .2s;text-align:center;position:relative;}
+.act-btn:hover{border-color:var(--pink-m);}
+.act-btn.chk{border-color:var(--pink);background:var(--pink-l);}
+.act-btn.chk::after{content:'✓';position:absolute;top:5px;right:7px;font-size:11px;color:var(--pink);font-weight:700;}
+.act-ic{font-size:22px;display:block;margin-bottom:4px;}
+.act-lbl{font-size:11px;font-weight:500;color:var(--text);}
+.act-pts{font-size:10px;color:var(--muted);margin-top:1px;}
+.water-track{background:white;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.9rem;display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+.w-lbl{font-size:12px;font-weight:500;flex:1;min-width:80px;}
+.w-cups{display:flex;gap:4px;flex-wrap:wrap;}
+.cup{width:26px;height:26px;border-radius:6px;border:1.5px solid var(--border);background:white;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s;}
+.cup.filled{background:#B5D4F4;border-color:#378ADD;}
+.notes-area{width:100%;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.75rem;font-family:'DM Sans',sans-serif;font-size:13px;resize:vertical;min-height:65px;color:var(--text);background:white;}
+.notes-area:focus{outline:none;border-color:var(--pink-m);}
+.pts-badge{display:inline-flex;align-items:center;gap:4px;background:var(--pink-l);color:var(--pink-d);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600;margin-bottom:.9rem;}
+.save-btn{background:var(--pink);color:white;border:none;border-radius:30px;padding:.8rem;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;width:100%;margin-top:.75rem;transition:all .2s;}
+.save-btn:hover{background:var(--pink-d);}
+.save-btn.saving{opacity:.6;cursor:wait;}
+/* ── HISTORICO ── */
+.period-sel{width:100%;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.6rem .8rem;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);background:white;margin-bottom:.8rem;}
+.stat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:1rem;}
+.stat-card{background:white;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.8rem;text-align:center;}
+.stat-num{font-size:20px;font-weight:700;color:var(--pink);}
+.stat-lbl{font-size:10px;color:var(--muted);margin-top:2px;}
+.week-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:1rem;}
+.day-dot{aspect-ratio:1;border-radius:7px;display:flex;flex-direction:column;align-items:center;justify-content:center;font-size:9px;font-weight:600;background:white;border:1.5px solid var(--border);}
+.day-dot.act{background:var(--pink-l);border-color:var(--pink-m);}
+.day-dot.today{background:var(--pink);color:white;border-color:var(--pink-d);}
+.day-dot .dn{font-size:8px;color:var(--muted);font-weight:400;}
+.day-dot.today .dn{color:rgba(255,255,255,.8);}
+.hist-log{background:white;border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;}
+.log-day{padding:.75rem .9rem;border-bottom:1px solid var(--border);}
+.log-day:last-child{border-bottom:none;}
+.log-hdr{font-weight:600;font-size:12px;margin-bottom:4px;display:flex;justify-content:space-between;}
+.log-acts{display:flex;gap:4px;flex-wrap:wrap;}
+.act-tag{background:var(--pink-l);color:var(--pink-d);border-radius:20px;padding:2px 8px;font-size:10px;font-weight:500;}
+.empty{text-align:center;padding:2rem 1rem;color:var(--muted);}
+.empty .big{font-size:36px;display:block;margin-bottom:.4rem;}
+/* ── GRUPO ── */
+.diva-row{display:flex;align-items:center;gap:10px;background:white;border:1.5px solid var(--border);border-radius:var(--rad-s);padding:.8rem .9rem;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.diva-row:hover{border-color:var(--pink-m);}
+.dr-av{width:40px;height:40px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;flex-shrink:0;}
+.dr-info{flex:1;}
+.dr-name{font-weight:600;font-size:13px;}
+.dr-acts{font-size:11px;color:var(--muted);margin-top:2px;}
+.streak-badge{background:var(--amber-l);color:var(--amber);border-radius:12px;padding:2px 8px;font-size:10px;font-weight:600;}
+/* ── RANKING ── */
+.rank-card{background:white;border:1.5px solid var(--border);border-radius:var(--rad);overflow:hidden;margin-bottom:1rem;}
+.rank-item{display:flex;align-items:center;gap:10px;padding:.8rem .9rem;border-bottom:1px solid var(--border);transition:background .15s;}
+.rank-item:last-child{border-bottom:none;}
+.rank-item:hover{background:var(--pink-l);}
+.rank-pos{font-size:16px;font-weight:700;width:28px;text-align:center;color:var(--muted);}
+.rank-av{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:white;}
+.rank-info{flex:1;}
+.rank-name{font-weight:600;font-size:13px;}
+.prog-wrap{background:var(--border);border-radius:4px;height:4px;margin-top:4px;overflow:hidden;}
+.prog-bar{height:100%;border-radius:4px;transition:width .5s;}
+.rank-pts{font-weight:700;font-size:14px;color:var(--pink);}
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;padding:1rem;}
+.modal-ov.open{display:flex;}
+.modal{background:white;border-radius:var(--rad);padding:1.3rem;max-width:400px;width:100%;max-height:80vh;overflow-y:auto;}
+.modal-hdr{display:flex;align-items:center;gap:10px;margin-bottom:1rem;}
+.modal-close{margin-left:auto;background:none;border:none;font-size:18px;cursor:pointer;color:var(--muted);}
+/* ── TOAST & LOADER ── */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--pink-d);color:white;padding:9px 20px;border-radius:30px;font-size:13px;font-weight:500;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none;white-space:nowrap;}
+.toast.show{opacity:1;}
+.loader{display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.4);border-top-color:white;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.sync-indicator{font-size:11px;color:var(--muted);text-align:center;padding:.4rem;display:none;}
+.sync-indicator.show{display:block;}
+@media(max-width:400px){.act-grid{grid-template-columns:repeat(3,1fr);}}
+</style>
+</head>
+<body>
+
+  
+</div>
+
+<!-- ══ MAIN APP ══ -->
+<div id="mainApp" class="app">
+  <header>
+    <div class="logo">Divas em Movimento <span>✦ e Monitoradas</span></div>
+    <div class="hdr-right">
+      <div class="online-dot" id="onlineDot" title="Conectado"></div>
+      <div class="avatar-hdr" id="headerAvatar" onclick="goLogin()" title="Trocar perfil"></div>
+    </div>
+  </header>
+
+  <div class="tabs" id="mainTabs" style="display:none">
+    <div class="tab active" onclick="showTab('checklist')" id="tab-checklist"><span class="ic">📋</span>Hoje</div>
+    <div class="tab" onclick="showTab('historico')" id="tab-historico"><span class="ic">📅</span>Histórico</div>
+    <div class="tab" onclick="showTab('grupo')" id="tab-grupo"><span class="ic">👯</span>Grupo</div>
+    <div class="tab" onclick="showTab('ranking')" id="tab-ranking"><span class="ic">🏆</span>Ranking</div>
+  </div>
+
+  <!-- LOGIN -->
+  <div id="screen-login" class="screen active">
+    <div class="login-wrap">
+      <div style="font-size:48px;margin-bottom:.5rem">💪</div>
+      <div class="login-title">Divas em Movimento</div>
+      <div class="login-sub">e Monitoradas 👀</div>
+      <div class="group-desc">Grupo oficial para fiscalizar a vida fitness das amigas</div>
+      <div class="diva-grid" id="divaGrid"></div>
+      <button class="btn-enter" id="btnEntrar" disabled onclick="entrar()">Entrar ✦</button>
+    </div>
+  </div>
+
+  <!-- CHECKLIST -->
+  <div id="screen-checklist" class="screen">
+    <div class="content">
+      <div class="greeting" style="margin-bottom:.9rem">
+        <h2 id="greetingName">Olá!</h2>
+        <div class="dt" id="greetingDate"></div>
+      </div>
+      <div class="pts-badge" id="ptsBadge">⭐ 0 pts hoje</div>
+      <div class="sec-title">🏃 Atividades físicas</div>
+      <div class="act-grid" id="actGrid"></div>
+      <div class="sec-title">🥗 Alimentação</div>
+      <div class="act-grid" id="foodGrid"></div>
+      <div class="sec-title">💧 Água (copos)</div>
+      <div class="water-track">
+        <div class="w-lbl">Meta: 8 copos</div>
+        <div class="w-cups" id="waterCups"></div>
+      </div>
+      <div class="sec-title">📝 Como foi seu dia?</div>
+      <textarea class="notes-area" id="dayNotes" placeholder="Conquistas, como se sentiu, motivação..."></textarea>
+      <button class="save-btn" id="saveBtn" onclick="salvarDia()">💾 Salvar meu dia</button>
+      <div class="sync-indicator" id="syncInd">🔄 Sincronizando com o grupo...</div>
+    </div>
+  </div>
+
+  <!-- HISTORICO -->
+  <div id="screen-historico" class="screen">
+    <div class="content">
+      <select class="period-sel" id="histPeriod" onchange="renderHistorico()">
+        <option value="semana">Esta semana</option>
+        <option value="mes">Este mês</option>
+      </select>
+      <div class="stat-grid" id="statGrid"></div>
+      <div class="sec-title">📅 Dias desta semana</div>
+      <div class="week-grid" id="weekGrid"></div>
+      <div class="sec-title">📖 Registro detalhado</div>
+      <div class="hist-log" id="histLog"></div>
+    </div>
+  </div>
+
+  <!-- GRUPO -->
+  <div id="screen-grupo" class="screen">
+    <div class="content">
+      <div class="sec-title">👯 Nossas Divas — atualizado agora</div>
+      <div id="divaList"></div>
+    </div>
+  </div>
+
+  <!-- RANKING -->
+  <div id="screen-ranking" class="screen">
+    <div class="content">
+      <div class="sec-title">🏆 Ranking da semana</div>
+      <div class="rank-card" id="rankWeek"></div>
+      <div class="sec-title">📆 Ranking do mês</div>
+      <div class="rank-card" id="rankMonth"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="divaModal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div id="modalAv" style="width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:18px;color:white;"></div>
+      <div><div id="modalName" style="font-weight:700;font-size:15px;"></div><div id="modalStreak" style="font-size:11px;color:var(--muted);"></div></div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js';
+import { getFirestore, doc, setDoc, getDoc, collection, query, where, getDocs, onSnapshot, orderBy } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+// ── CONFIG ──
+const DIVAS = [
+  {id:'paty',  name:'Paty',  color:'#D4537E', light:'#FBEAF0', emoji:'👑'},
+  {id:'vany',  name:'Vany',  color:'#1D9E75', light:'#E1F5EE', emoji:'🌿'},
+  {id:'dani',  name:'Dani',  color:'#7F77DD', light:'#EEEDFE', emoji:'⭐'},
+  {id:'carol', name:'Carol', color:'#D85A30', light:'#FAECE7', emoji:'🔥'},
+];
+const ACTS = [
+  {id:'academia',  icon:'🏋️', label:'Academia',  pts:30},
+  {id:'correr',    icon:'🏃', label:'Correr',     pts:25},
+  {id:'caminhar',  icon:'🚶', label:'Caminhar',   pts:15},
+  {id:'bike',      icon:'🚴', label:'Bike',       pts:20},
+  {id:'yoga',      icon:'🧘', label:'Yoga',       pts:20},
+  {id:'natacao',   icon:'🏊', label:'Natação',    pts:30},
+  {id:'danca',     icon:'💃', label:'Dança',      pts:20},
+  {id:'funcional', icon:'⚡', label:'Funcional',  pts:25},
+  {id:'pilates',   icon:'🌀', label:'Pilates',    pts:20},
+  {id:'arrumarcasa', icon:'🏠', label:'Arrumar casa', pts:15},
+];
+const FOOD = [
+  {id:'frutas',    icon:'🍎', label:'Frutas',     pts:10},
+  {id:'verduras',  icon:'🥗', label:'Verduras',   pts:10},
+  {id:'proteina',  icon:'🥩', label:'Proteína',   pts:10},
+  {id:'semfritos', icon:'🚫', label:'Sem fritos', pts:15},
+  {id:'semdoces',  icon:'🍬', label:'Sem doces',  pts:15},
+  {id:'semjunk',   icon:'🍔', label:'Sem junk',   pts:15},
+];
+
+let db = null, demoMode = false;
+let currentUser = null, selectedDiva = null;
+let todayData = {activities:[], food:[], water:0, notes:''};
+let unsubListeners = [];
+let allDivaData = {}; // cache realtime
+
+function todayStr(){ return new Date().toISOString().slice(0,10); }
+function calcPts(d){ if(!d) return 0; let p=0; (d.activities||[]).forEach(id=>{const a=ACTS.find(x=>x.id===id);if(a)p+=a.pts;}); (d.food||[]).forEach(id=>{const f=FOOD.find(x=>x.id===id);if(f)p+=f.pts;}); p+=(d.water||0)*5; return p; }
+
+// ── FIREBASE INIT ──
+window.initFirebase = function(cfg){
+  try {
+    const app = initializeApp(cfg);
+    db = getFirestore(app);
+    document.getElementById('onlineDot').style.background = '#4ade80';
+    return true;
+  } catch(e){ return false; }
+};
+
+// ── SAVE / LOAD ──
+async function saveDay(divaId, date, data){
+  if(demoMode){ localStorage.setItem(`dim_${divaId}_${date}`, JSON.stringify(data)); return; }
+  if(!db) return;
+  await setDoc(doc(db,'checkins',`${divaId}_${date}`), {...data, divaId, date, updatedAt: new Date().toISOString()});
+}
+
+async function loadDay(divaId, date){
+  if(demoMode){ const s=localStorage.getItem(`dim_${divaId}_${date}`); return s?JSON.parse(s):null; }
+  if(!db) return null;
+  const snap = await getDoc(doc(db,'checkins',`${divaId}_${date}`));
+  return snap.exists() ? snap.data() : null;
+}
+
+async function loadRange(divaId, days){
+  const results = [];
+  const today = new Date();
+  for(let i=0;i<days;i++){
+    const d = new Date(today); d.setDate(d.getDate()-i);
+    const ds = d.toISOString().slice(0,10);
+    const data = await loadDay(divaId, ds);
+    if(data) results.push({date:ds, ...data});
+  }
+  return results;
+}
+
+// Realtime listener for grupo tab
+function subscribeAll(){
+  unsubListeners.forEach(u=>u());
+  unsubListeners = [];
+  if(demoMode) return;
+  if(!db) return;
+  DIVAS.forEach(diva => {
+    const docRef = doc(db,'checkins',`${diva.id}_${todayStr()}`);
+    const unsub = onSnapshot(docRef, snap => {
+      allDivaData[diva.id] = snap.exists() ? snap.data() : null;
+      if(document.getElementById('screen-grupo').classList.contains('active')) renderGrupo();
+      if(document.getElementById('screen-ranking').classList.contains('active')) renderRanking();
+    });
+    unsubListeners.push(unsub);
+  });
+}
+
+
+function launchApp(){
+  document.getElementById('mainApp').style.display = 'block';
+  renderLogin();
+  subscribeAll();
+}
+
+// ── LOGIN ──
+function renderLogin(){
+  const grid = document.getElementById('divaGrid');
+  grid.innerHTML = '';
+  DIVAS.forEach(diva => {
+    const streak = getLocalStreak(diva.id);
+    const div = document.createElement('div');
+    div.className = 'diva-card'+(selectedDiva?.id===diva.id?' sel':'');
+    div.onclick = ()=>{ selectedDiva=diva; renderLogin(); document.getElementById('btnEntrar').disabled=false; };
+    const savedEmoji = localStorage.getItem('dim_emoji_'+diva.id) || diva.emoji;
+    const savedName = localStorage.getItem('dim_name_'+diva.id) || diva.name;
+    div.innerHTML = `<div class="diva-av" style="background:${diva.color}">${savedEmoji}</div><div class="diva-name">${savedName}</div><div class="diva-streak">${streak>0?'🔥 '+streak+' dias':'Vamos lá!'}</div><button class="edit-avatar-btn" onclick="event.stopPropagation();openEmojiPicker('${diva.id}')">✏️ mudar emoji</button>
+    <button class="edit-avatar-btn" style="color:var(--muted)" onclick="event.stopPropagation();editName('${diva.id}','${diva.name}')">✏️ mudar nome</button>`;
+    grid.appendChild(div);
+  });
+}
+
+function getDivaName(id){ return localStorage.getItem('dim_name_'+id) || (DIVAS.find(d=>d.id===id)?.name||id); }
+function getDivaEmoji(id){ return localStorage.getItem('dim_emoji_'+id) || (DIVAS.find(d=>d.id===id)?.emoji||'⭐'); }
+function getLocalStreak(id){
+  let c=0;
+  for(let i=0;i<60;i++){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const s=localStorage.getItem(`dim_streak_${id}_${d.toISOString().slice(0,10)}`);
+    if(s==='1') c++; else if(i>0) break;
+  }
+  return c;
+}
+
+window.entrar = async function(){
+  if(!selectedDiva) return;
+  currentUser = selectedDiva;
+  const savedEmoji = localStorage.getItem('dim_emoji_'+currentUser.id) || currentUser.emoji;
+  document.getElementById('headerAvatar').textContent = savedEmoji;
+  document.getElementById('mainTabs').style.display = 'flex';
+  const saved = await loadDay(currentUser.id, todayStr());
+  todayData = saved || {activities:[],food:[],water:0,notes:''};
+  showTab('checklist');
+  document.getElementById('screen-login').classList.remove('active');
+};
+
+window.goLogin = function(){
+  selectedDiva=null; currentUser=null;
+  document.getElementById('mainTabs').style.display='none';
+  ['checklist','historico','grupo','ranking'].forEach(t=>{ document.getElementById('screen-'+t).classList.remove('active'); });
+  document.getElementById('screen-login').classList.add('active');
+  document.getElementById('btnEntrar').disabled=true;
+  renderLogin();
+};
+
+// ── TABS ──
+window.showTab = function(tab){
+  ['checklist','historico','grupo','ranking'].forEach(t=>{
+    document.getElementById('screen-'+t).classList.toggle('active',t===tab);
+    document.getElementById('tab-'+t).classList.toggle('active',t===tab);
+  });
+  if(tab==='checklist') renderChecklist();
+  if(tab==='historico') renderHistorico();
+  if(tab==='grupo') renderGrupo();
+  if(tab==='ranking') renderRanking();
+};
+
+// ── CHECKLIST ──
+function renderChecklist(){
+  const days=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const months=['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+  const now=new Date();
+  document.getElementById('greetingName').textContent='Olá, '+getDivaName(currentUser.id)+'! '+getDivaEmoji(currentUser.id);
+  document.getElementById('greetingDate').textContent=days[now.getDay()]+', '+now.getDate()+' de '+months[now.getMonth()]+' de '+now.getFullYear();
+
+  const ag=document.getElementById('actGrid'); ag.innerHTML='';
+  ACTS.forEach(a=>{
+    const chk=todayData.activities.includes(a.id);
+    const btn=document.createElement('div');
+    btn.className='act-btn'+(chk?' chk':'');
+    btn.innerHTML=`<span class="act-ic">${a.icon}</span><div class="act-lbl">${a.label}</div><div class="act-pts">+${a.pts}pts</div>`;
+    btn.onclick=()=>{ const idx=todayData.activities.indexOf(a.id); idx>=0?todayData.activities.splice(idx,1):todayData.activities.push(a.id); btn.classList.toggle('chk'); updatePts(); };
+    ag.appendChild(btn);
+  });
+
+  const fg=document.getElementById('foodGrid'); fg.innerHTML='';
+  FOOD.forEach(f=>{
+    const chk=todayData.food.includes(f.id);
+    const btn=document.createElement('div');
+    btn.className='act-btn'+(chk?' chk':'');
+    btn.innerHTML=`<span class="act-ic">${f.icon}</span><div class="act-lbl">${f.label}</div><div class="act-pts">+${f.pts}pts</div>`;
+    btn.onclick=()=>{ const idx=todayData.food.indexOf(f.id); idx>=0?todayData.food.splice(idx,1):todayData.food.push(f.id); btn.classList.toggle('chk'); updatePts(); };
+    fg.appendChild(btn);
+  });
+
+  const wc=document.getElementById('waterCups'); wc.innerHTML='';
+  for(let i=0;i<8;i++){
+    const cup=document.createElement('div');
+    cup.className='cup'+(i<todayData.water?' filled':'');
+    cup.textContent='💧';
+    cup.onclick=()=>{ todayData.water=(todayData.water===i+1)?i:i+1; document.querySelectorAll('.cup').forEach((c,j)=>c.classList.toggle('filled',j<todayData.water)); updatePts(); };
+    wc.appendChild(cup);
+  }
+  document.getElementById('dayNotes').value=todayData.notes||'';
+  updatePts();
+}
+
+function updatePts(){ document.getElementById('ptsBadge').textContent='⭐ '+calcPts(todayData)+' pts hoje'; }
+
+window.salvarDia = async function(){
+  todayData.notes=document.getElementById('dayNotes').value;
+  const btn=document.getElementById('saveBtn');
+  btn.classList.add('saving');
+  btn.innerHTML='<span class="loader"></span>Salvando...';
+  document.getElementById('syncInd').classList.add('show');
+  try {
+    await saveDay(currentUser.id, todayStr(), todayData);
+    if(calcPts(todayData)>0) localStorage.setItem(`dim_streak_${currentUser.id}_${todayStr()}`,'1');
+    showToast('Dia salvo e sincronizado! 🎉');
+  } catch(e){ showToast('Erro ao salvar. Tente novamente.'); }
+  btn.classList.remove('saving');
+  btn.innerHTML='💾 Salvar meu dia';
+  document.getElementById('syncInd').classList.remove('show');
+};
+
+// ── HISTORICO ──
+window.renderHistorico = async function(){
+  const period=document.getElementById('histPeriod').value;
+  const days=period==='semana'?7:30;
+  const hist=await loadRange(currentUser.id, days);
+  const totalPts=hist.reduce((s,d)=>s+calcPts(d),0);
+  const activeDays=hist.filter(d=>calcPts(d)>0).length;
+  const totalActs=hist.reduce((s,d)=>s+(d.activities||[]).length,0);
+
+  document.getElementById('statGrid').innerHTML=`
+    <div class="stat-card"><div class="stat-num">${totalPts}</div><div class="stat-lbl">pontos</div></div>
+    <div class="stat-card"><div class="stat-num">${activeDays}</div><div class="stat-lbl">dias ativos</div></div>
+    <div class="stat-card"><div class="stat-num">${totalActs}</div><div class="stat-lbl">atividades</div></div>`;
+
+  const wg=document.getElementById('weekGrid'); wg.innerHTML='';
+  const dn=['D','S','T','Q','Q','S','S'];
+  for(let i=6;i>=0;i--){
+    const d=new Date(); d.setDate(d.getDate()-i);
+    const ds=d.toISOString().slice(0,10);
+    const data=await loadDay(currentUser.id,ds);
+    const pts=calcPts(data);
+    const isToday=i===0;
+    const dot=document.createElement('div');
+    dot.className='day-dot'+(pts>0?' act':'')+(isToday?' today':'');
+    dot.innerHTML=`<span class="dn">${dn[d.getDay()]}</span><span>${pts>0?'✓':''}</span>`;
+    wg.appendChild(dot);
+  }
+
+  const log=document.getElementById('histLog');
+  if(!hist.length){ log.innerHTML='<div class="empty"><span class="big">📋</span>Nenhum registro ainda!</div>'; return; }
+  log.innerHTML='';
+  hist.forEach(entry=>{
+    const d=new Date(entry.date+'T12:00:00');
+    const pts=calcPts(entry);
+    const acts=[...(entry.activities||[]).map(id=>ACTS.find(a=>a.id===id)?.label),(entry.food||[]).map(id=>FOOD.find(f=>f.id===id)?.label)].flat().filter(Boolean);
+    const div=document.createElement('div'); div.className='log-day';
+    div.innerHTML=`<div class="log-hdr"><span>${d.toLocaleDateString('pt-BR',{weekday:'short',day:'numeric',month:'short'})}</span><span style="color:var(--pink);font-weight:700">⭐ ${pts} pts</span></div><div class="log-acts">${acts.map(a=>`<span class="act-tag">${a}</span>`).join('')}${(entry.water||0)>0?`<span class="act-tag">💧 ${entry.water}</span>`:''}</div>${entry.notes?`<div style="font-size:11px;color:var(--muted);margin-top:4px;font-style:italic">"${entry.notes}"</div>`:''}`;
+    log.appendChild(div);
+  });
+};
+
+// ── GRUPO ──
+window.renderGrupo = async function(){
+  const list=document.getElementById('divaList'); list.innerHTML='';
+  for(const diva of DIVAS){
+    let data = allDivaData[diva.id];
+    if(data===undefined) data = await loadDay(diva.id, todayStr());
+    const pts=calcPts(data);
+    const acts=(data?.activities||[]).map(id=>ACTS.find(a=>a.id===id)?.label).filter(Boolean);
+    const streak=getLocalStreak(diva.id);
+    const row=document.createElement('div'); row.className='diva-row';
+    row.innerHTML=`<div class="dr-av" style="background:${diva.color}">${getDivaEmoji(diva.id)}</div><div class="dr-info"><div class="dr-name">${getDivaName(diva.id)}${diva.id===currentUser?.id?' <span style="color:var(--pink);font-size:10px">(você)</span>':''}</div><div class="dr-acts">${acts.length?acts.join(', ')+(pts>0?` — ⭐ ${pts} pts`:''):'Nenhuma atividade hoje'}</div></div>${streak>0?`<span class="streak-badge">🔥 ${streak}d</span>`:''}`;
+    row.onclick=()=>openDivaModal(diva);
+    list.appendChild(row);
+  }
+};
+
+// ── RANKING ──
+window.renderRanking = async function(){
+  async function weekPts(divaId){
+    const hist=await loadRange(divaId,7);
+    return hist.reduce((s,d)=>s+calcPts(d),0);
+  }
+  async function monthPts(divaId){
+    const hist=await loadRange(divaId,30);
+    return hist.reduce((s,d)=>s+calcPts(d),0);
+  }
+
+  const medals=['🥇','🥈','🥉','4️⃣'];
+  async function buildRanking(elId, ptsFn){
+    const el=document.getElementById(elId); el.innerHTML='<div class="empty" style="padding:1rem">⏳ Carregando...</div>';
+    const list=await Promise.all(DIVAS.map(async d=>({...d,pts:await ptsFn(d.id)})));
+    list.sort((a,b)=>b.pts-a.pts);
+    const max=list[0]?.pts||1;
+    el.innerHTML='';
+    list.forEach((diva,i)=>{
+      const pct=Math.round(diva.pts/max*100);
+      const div=document.createElement('div'); div.className='rank-item';
+      div.innerHTML=`<div class="rank-pos">${medals[i]}</div><div class="rank-av" style="background:${diva.color}">${getDivaEmoji(diva.id)}</div><div class="rank-info"><div class="rank-name">${getDivaName(diva.id)}${diva.id===currentUser?.id?' (você)':''}</div><div class="prog-wrap"><div class="prog-bar" style="width:${pct}%;background:${diva.color}"></div></div></div><div class="rank-pts">${diva.pts}</div>`;
+      el.appendChild(div);
+    });
+  }
+
+  buildRanking('rankWeek', weekPts);
+  buildRanking('rankMonth', monthPts);
+};
+
+// ── MODAL DIVA ──
+window.openDivaModal = async function(diva){
+  document.getElementById('modalAv').style.background=diva.color;
+  document.getElementById('modalAv').textContent=localStorage.getItem('dim_emoji_'+diva.id)||diva.emoji;
+  document.getElementById('modalName').textContent=getDivaName(diva.id);
+  const streak=getLocalStreak(diva.id);
+  document.getElementById('modalStreak').textContent=streak>0?'🔥 '+streak+' dias seguidos':'Ainda sem sequência';
+  const hist=await loadRange(diva.id,7);
+  const pts=hist.reduce((s,d)=>s+calcPts(d),0);
+  const acts=hist.reduce((s,d)=>s+(d.activities||[]).length,0);
+  document.getElementById('modalBody').innerHTML=`
+    <div class="stat-grid" style="margin-bottom:.8rem">
+      <div class="stat-card"><div class="stat-num">${pts}</div><div class="stat-lbl">pts semana</div></div>
+      <div class="stat-card"><div class="stat-num">${acts}</div><div class="stat-lbl">atividades</div></div>
+      <div class="stat-card"><div class="stat-num">${streak}</div><div class="stat-lbl">sequência</div></div>
+    </div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-bottom:6px">Últimos 7 dias</div>
+    <div style="display:flex;gap:4px">
+      ${hist.map(d=>{const p=calcPts(d);const dt=new Date(d.date+'T12:00:00');return`<div style="flex:1;aspect-ratio:1;border-radius:7px;background:${p>0?diva.color+'33':'rgba(0,0,0,.05)'};display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:600;color:${p>0?diva.color:'var(--muted)'}">${dt.getDate()}</div>`;}).join('')}
+    </div>`;
+  document.getElementById('divaModal').classList.add('open');
+};
+// ── EDIT NAME ──
+window.editName = function(divaId, currentName){
+  const saved = localStorage.getItem('dim_name_'+divaId) || currentName;
+  document.getElementById('modalAv').style.background = DIVAS.find(d=>d.id===divaId).color;
+  document.getElementById('modalAv').textContent = getDivaEmoji(divaId);
+  document.getElementById('modalName').textContent = 'Como quer ser chamada?';
+  document.getElementById('modalStreak').textContent = 'Digite seu apelido no grupo';
+  document.getElementById('modalBody').innerHTML = `
+    <input id="nameInput" value="${saved}" maxlength="12" style="width:100%;padding:.8rem 1rem;border:1.5px solid var(--border);border-radius:10px;font-family:'DM Sans',sans-serif;font-size:16px;color:var(--text);text-align:center;margin-bottom:.8rem;" placeholder="Seu nome..." />
+    <button onclick="saveName('${divaId}')" style="width:100%;background:var(--pink);color:white;border:none;border-radius:30px;padding:.7rem;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Salvar ✓</button>`;
+  document.getElementById('divaModal').classList.add('open');
+  setTimeout(()=>document.getElementById('nameInput')?.focus(),200);
+};
+window.saveName = function(divaId){
+  const val = document.getElementById('nameInput')?.value.trim();
+  if(!val) return;
+  localStorage.setItem('dim_name_'+divaId, val);
+  renderLogin();
+  closeModal();
+  showToast('Nome atualizado! 🎉');
+};
+// ── EMOJI PICKER ──
+const EMOJI_LIST = ['👑','🌿','⭐','🔥','🌟','💎','🦋','🌸','🏆','💪','🎯','🌺','🦄','✨','🍀','🌙','☀️','🎀','💃','🧘'];
+window.openEmojiPicker = function(divaId){
+  const diva = DIVAS.find(d=>d.id===divaId);
+  if(!diva) return;
+  document.getElementById('modalAv').style.background = diva.color;
+  document.getElementById('modalAv').textContent = localStorage.getItem('dim_emoji_'+divaId) || diva.emoji;
+  document.getElementById('modalName').textContent = 'Escolha seu emoji, '+diva.name+'!';
+  document.getElementById('modalStreak').textContent = 'Toque no emoji que quiser';
+  document.getElementById('modalBody').innerHTML = `
+    <div class="emoji-picker">
+      ${EMOJI_LIST.map(e=>`<div class="emoji-opt${(localStorage.getItem('dim_emoji_'+divaId)||diva.emoji)===e?' sel':''}" onclick="selectEmoji('${divaId}','${e}')">${e}</div>`).join('')}
+    </div>
+    <button onclick="closeModal()" style="margin-top:1rem;width:100%;background:var(--pink);color:white;border:none;border-radius:30px;padding:.7rem;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;cursor:pointer;">Salvar ✓</button>`;
+  document.getElementById('divaModal').classList.add('open');
+};
+window.selectEmoji = function(divaId, emoji){
+  localStorage.setItem('dim_emoji_'+divaId, emoji);
+  document.querySelectorAll('.emoji-opt').forEach(el=>el.classList.toggle('sel', el.textContent===emoji));
+  document.getElementById('modalAv').textContent = emoji;
+  renderLogin();
+  if(currentUser?.id===divaId) document.getElementById('headerAvatar').textContent = emoji;
+};
+window.closeModal=()=>document.getElementById('divaModal').classList.remove('open');
+document.getElementById('divaModal').addEventListener('click',function(e){if(e.target===this)closeModal();});
+
+// ── TOAST ──
+window.showToast=function(msg){ const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),3000); };
+
+// ── CONFIG FIREBASE — DIVAS EM MOVIMENTO ──
+const FIREBASE_CONFIG = {
+  apiKey: "AIzaSyCw_jI0jZ9qwhrV48TZ_nNViqoiFM9Hlf0",
+  authDomain: "divas-em-movimento.firebaseapp.com",
+  projectId: "divas-em-movimento",
+  storageBucket: "divas-em-movimento.firebasestorage.app",
+  messagingSenderId: "977988084066",
+  appId: "1:977988084066:web:8c17e325cf67b282750c3b"
+};
+window.initFirebase(FIREBASE_CONFIG);
+launchApp();
+</script>
+</body>
+</html>
